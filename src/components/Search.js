@@ -1,22 +1,36 @@
 import React, {useEffect, useState} from 'react'
-import { Button, Row, Col, ButtonGroup, Pagination, PaginationItem, PaginationLink} from 'reactstrap';
+import { Button, Row, Col, ButtonGroup, Pagination, PaginationItem, PaginationLink, Form, FormGroup, Label, Input} from 'reactstrap';
 
 import axios from 'axios';
 import {Clips} from './Clips'
+import {StreamerSelect} from './StreamerSelect'
 
 export const Search = () => {
     const [clips,setClips] = useState([])
+    const [loading, setLoading] = useState(true)
+
     const [range, setRange] = useState(0)
     const [timeRange, setTimeRange] = useState(7)
-    const [loading, setLoading] = useState(true)
+    
+    const pagination = [-5,-4,-3,-2,-1,0,1,2,3,4]
     const [pages, setPages] = useState([])
+    const [activePage, setActivePage] = useState(0)
+
+    const [numClips, setNumClips] = useState(6)
+
+    const [selectStreamer, setSelStreamer] = useState(false)
+    const [streamerList, setStreamerList] = useState([])
     
     useEffect(() => {
         async function getClips(data,t){
             const list = []
+            const list2 = []
+            console.log(data.data)
             data.data.forEach(d => {
                 list.push(d.to_id)
+                list2.push(d.to_name)
             })
+            setStreamerList(list2)
 
             var date = new Date()
             date.setDate(date.getDate()-timeRange)
@@ -26,7 +40,6 @@ export const Search = () => {
             const hours = (date.getHours()).toString().length===2? date.getHours(): `0${date.getHours()}`
             const minutes = (date.getMinutes()).toString().length===2? date.getMinutes(): `0${date.getMinutes()}`
             const seconds = (date.getSeconds()).toString().length===2? date.getSeconds(): `0${date.getSeconds()}`
-            console.log(`${year}-${month}-${day}T${hours}:${minutes}:${seconds}Z`)
 
             var clipData = []
             if(timeRange!==0){
@@ -38,7 +51,7 @@ export const Search = () => {
                         },
                         params:{
                             broadcaster_id: list[i],
-                            first: 6,
+                            first: numClips,
                             started_at: `${year}-${month}-${day}T${hours}:${minutes}:${seconds}Z`
                         }
                     }).then(res => {
@@ -65,7 +78,7 @@ export const Search = () => {
                         },
                         params:{
                             broadcaster_id: list[i],
-                            first: 6,
+                            first: numClips,
                         }
                     }).then(res => {
                         res.data.data.forEach(d => {
@@ -87,7 +100,6 @@ export const Search = () => {
 
         async function getFollowers(data,t){
             const id = data.data[0].id
-            console.log(id)
     
             axios.get('https://api.twitch.tv/helix/users/follows',{
                 headers:{
@@ -99,7 +111,6 @@ export const Search = () => {
                     first: 100
                 }
             }).then(res =>{
-                console.log('successfully got follows')
                 getClips(res.data,t)
             }).catch(err => {
                 console.log(err)
@@ -118,13 +129,14 @@ export const Search = () => {
             },
         }).then(res =>{
             getFollowers(res.data,t)
+
         }).catch(err => {
             console.log(err)
         })
-    },[timeRange])
+    },[timeRange, numClips])
 
     const login = () =>{
-        window.location = `https://id.twitch.tv/oauth2/authorize?client_id=denha589zf379hxp046k8o9hhl3cjp&redirect_uri=${window.location}&response_type=token&scope=user:read:email`
+        window.location = `https://id.twitch.tv/oauth2/authorize?client_id=denha589zf379hxp046k8o9hhl3cjp&redirect_uri=${window.location.protocol}//${window.location.host}&response_type=token&scope=user:read:email`
     }
 
     const sortClips = (clipData) =>{
@@ -145,60 +157,92 @@ export const Search = () => {
     }
 
     const rightArrow = () =>{
-        if(range+6 < clips.length)
+        if(range+6 < clips.length){
             setRange(range+6)
+            setActivePage(activePage+1)
+        }
     }
 
     const leftArrow = () =>{
-        if(range-6 >= 0)
+        if(range-6 >= 0){
             setRange(range-6)
+            setActivePage(activePage-1)
+        }
     }
 
-    const change24 = () =>{
-        setTimeRange(1)
-    }
-    const change7 = () =>{
-        setTimeRange(7)
-    }
-    const change30 = () =>{
-        setTimeRange(30)
-    }
-    const changeAll = () =>{
-        setTimeRange(0)
+    const changeTime = (num) =>{
+        setTimeRange(num)
+        changePage(0)
     }
 
     const changePage = (num) =>{
         setRange(num*6)
+        setActivePage(num)
+    }
+
+    const changeNumClips = (e) => {
+        e.preventDefault()
+        if(e.target.numclips.value > 100 || e.target.numclips.value < 1)
+            return
+        changePage(0)
+        setNumClips(e.target.numclips.value)
     }
 
     return (
         <>
         {
+            selectStreamer?
+            <StreamerSelect selectStreamer={selectStreamer} setSelStreamer={setSelStreamer} streamerList={streamerList}/>:
             loading?
             <Button onClick={login} color="primary">LOGIN</Button>:
             <Col>
                 <Row>
                     <ButtonGroup style={{marginBottom:'5px'}} id="timeSelect">
-                        <Button style={{marginRight:'10px'}}>Select Streamers</Button>
-                        <Button onClick={change24}>24 Hours</Button>
-                        <Button onClick={change7}>7 Days</Button>
-                        <Button onClick={change30}>30 Days</Button>
-                        <Button onClick={changeAll}>All Time</Button>
+                        {/* <Button onClick={()=>setSelStreamer(true)} style={{marginRight:'10px'}}>Select Streamers</Button> */}
+                        <Button onClick={()=>changeTime(1)}>24 Hours</Button>
+                        <Button onClick={()=>changeTime(7)}>7 Days</Button>
+                        <Button onClick={()=>changeTime(30)}>30 Days</Button>
+                        <Button onClick={()=>changeTime(0)}>All Time</Button>
                     </ButtonGroup>
+                    <Form onSubmit={changeNumClips} inline style={{marginRight:'100px'}}>
+                        <FormGroup>
+                            <Label for="numclips" className="mr-sm-2" style={{color:"lightgray !important;"}}>Num. Clips Per Streamer (1-100)</Label>
+                            <Input type="number" name="numclips" id="numclips" style={{width:'100px'}}/>
+                        </FormGroup>
+                        <Button style={{backgroundColor:'#a970ff'}}>Submit</Button>
+                    </Form>
                 </Row>
                 <Row>
                     <Button id="leftButton" onClick={leftArrow} size="lg">{'<-'}</Button>
                     <Clips pages={pages} clips1={clips.slice(range,range+3)} clips2={clips.slice(range+3,range+6)}/>
                     <Button id="rightButton" onClick={rightArrow} size="lg">{'->'}</Button>
                 </Row>
-                <Pagination id="pages" style={{marginTop:'5px'}}>
+                <Pagination id="pages" aria-label="Page navigation example">
+                    <PaginationItem>
+                        <PaginationLink first onClick={()=>{changePage(0)}} />
+                    </PaginationItem>
+                    <PaginationItem>
+                        <PaginationLink previous onClick={leftArrow}/>
+                    </PaginationItem>
                     {
-                        pages.map(page=>(
+                        pagination.map(page=>(
+                            activePage+page===activePage?
+                            <PaginationItem id="activePage" key={page}>
+                            <PaginationLink>{activePage+page+1}</PaginationLink>
+                            </PaginationItem>:
+                            pages.includes(activePage+page)?
                             <PaginationItem key={page}>
-                                <PaginationLink onClick={()=>changePage(page)}>{page+1}</PaginationLink>
-                            </PaginationItem>
-                        ))  
+                            <PaginationLink onClick={()=>changePage(activePage+page)}>{activePage+page+1}</PaginationLink>
+                            </PaginationItem>:
+                            <></>
+                        ))
                     }
+                    <PaginationItem>
+                        <PaginationLink next onClick={rightArrow} />
+                    </PaginationItem>
+                    <PaginationItem>
+                        <PaginationLink last onClick={()=>{changePage(pages.length-1)}} />
+                    </PaginationItem>
                 </Pagination>
             </Col>
         }
