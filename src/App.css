@@ -32,10 +32,31 @@ body{
   text-decoration: none;
 }
 
+iframe {
+  height: 100%;
+  left: 0;
+  top: 0;
+  width: 100%;
+}
+
+.card img, .card button{
+  height:100%;
+  width: 100%;
+}
+
+.card-body{
+  height:100%;
+}
+
+.card-group{
+  height: 50vh;
+}
+
 #leftButton, #rightButton{
   background-color: #a970ff;
   color: white;
-  height: 300px;
+  height: 30vh;
+  width: 3vw;
   margin: auto;
 }
 

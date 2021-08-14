@@ -162,9 +162,9 @@ export const Search = () => {
                     </Form>
                 </Row>
                 <Row>
-                    <Button id="leftButton" onClick={leftArrow} size="lg">{'<-'}</Button>
+                    <Button id="leftButton" onClick={leftArrow} size="lg">{'<'}</Button>
                     <Clips pages={pages} clips1={clips.slice(range,range+3)} clips2={clips.slice(range+3,range+6)}/>
-                    <Button id="rightButton" onClick={rightArrow} size="lg">{'->'}</Button>
+                    <Button id="rightButton" onClick={rightArrow} size="lg">{'>'}</Button>
                 </Row>
                 <Pagination id="pages" aria-label="Page navigation example">
                     <PaginationItem>
