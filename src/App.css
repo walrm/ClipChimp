@@ -8,61 +8,63 @@ body{
   align-items: center;
   justify-content: center;
   min-height:100vh;
-  background-color: #1f1f23 !important;
+  background-color: #1f1f23;
 }
 
 .card{
-  background-color: #0e0e10 !important;
-  border: 1px #1c1c1d solid !important;
-  color: lightgray !important;
+  width: 30vw;
+  height: 40vh;
+  background-color: #0e0e10;
+  border: 1px #1c1c1d solid;
+  color: lightgray;
 }
 
 .card-header{
-  border-bottom: 1px #1c1c1d solid !important;
+  border-bottom: 1px #1c1c1d solid;
 }
 
 .card a{
-  color: white !important;
+  color: white;
 }
 
 .card a:hover{
-  color: #a970ff !important;
-  text-decoration: none !important;
+  color: #a970ff;
+  text-decoration: none;
 }
 
 #leftButton, #rightButton{
-  background-color: #a970ff !important;
-  color: white !important;
+  background-color: #a970ff;
+  color: white;
   height: 300px;
   margin: auto;
 }
 
 #timeSelect{
-  display:flex !important;
+  display:flex ;
   justify-content:center;
   margin: auto;
 }
 
 #pages{
-  display:flex !important;
+  display:flex;
   justify-content:center;
   margin: auto;
 }
 
 .page-link{
-  background-color: #0e0e10 !important;
-  color: white !important;
+  background-color: #0e0e10;
+  color: white;
 }
 
 .page-link:hover{
-  background-color: #a970ff !important;
-  text-decoration: none !important;
+  background-color: #a970ff ;
+  text-decoration: none ;
 }
 
 #activePage .page-link{
-  background-color: #a970ff !important;
+  background-color: #a970ff ;
 }
 
 #activeTime {
-  background-color: #a970ff !important;
+  background-color: #a970ff ;
 }

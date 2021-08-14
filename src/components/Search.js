@@ -74,6 +74,8 @@ export const Search = () => {
     },[timeRange, numClips])
 
     const login = () =>{
+        console.log(window.location.protocol);
+        console.log(window.location.host);
         window.location = `https://id.twitch.tv/oauth2/authorize?client_id=denha589zf379hxp046k8o9hhl3cjp&redirect_uri=${window.location.protocol}//${window.location.host}&response_type=token&scope=user:read:email`
     }
 
