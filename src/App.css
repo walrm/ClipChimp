@@ -46,10 +46,11 @@ iframe {
 
 .card-body{
   height:100%;
+  font-Size: 1vmax;
 }
 
 .card-group{
-  height: 45vh;
+  height: 46vh;
 }
 
 #leftButton, #rightButton{
