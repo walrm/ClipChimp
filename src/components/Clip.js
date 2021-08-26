@@ -23,7 +23,7 @@ export const Clip = (props) => {
                     title={clip.id}
                 >
                 </iframe>:
-                <button onClick={loadVideo}><img alt={clip.id} src={clip.thumbnail_url}/></button>
+                <button onClick={loadVideo} ><img alt={clip.id} src={clip.thumbnail_url}/></button>
             }
             <CardHeader className="text-center" color="primary"><a rel="noopener noreferrer" target="_blank" href={clip.url}>{clip.title}</a></CardHeader>
             <CardText> Views: {clip.view_count}<br/>{clip.broadcaster_name}</CardText>
